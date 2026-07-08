@@ -1,0 +1,61 @@
+# RBD 9103 channel configuration for the current RFA USB hub mapping.
+# name is the historical LabVIEW/RBD nickname; label is the physical electrode.
+
+channels:
+  Sneezy:
+    label: Sample
+    port: COM10
+    enabled: true
+    range: auto
+    filter: 32
+    sample_interval_ms: 50
+  Sleepy:
+    label: Retarding Grid 1
+    port: COM13
+    enabled: true
+    range: auto
+    filter: 32
+    sample_interval_ms: 50
+  Dopey:
+    label: Collector
+    port: COM9
+    enabled: true
+    range: auto
+    filter: 32
+    sample_interval_ms: 50
+  Happy:
+    label: Retarding Grid 2
+    port: COM14
+    enabled: true
+    range: auto
+    filter: 32
+    sample_interval_ms: 50
+  Grumpy:
+    label: Space-charge Grid
+    port: COM16
+    enabled: true
+    range: auto
+    filter: 32
+    sample_interval_ms: 50
+  Bashful:
+    label: Drift Tube
+    port: COM17
+    enabled: true
+    range: auto
+    filter: 32
+    sample_interval_ms: 50
+  Doc:
+    label: Rod
+    port: COM7
+    enabled: true
+    range: auto
+    filter: 32
+    sample_interval_ms: 50
+
+serial:
+  baudrate: 57600
+  timeout_s: 1.0
+
+logging:
+  data_dir: data
+  raw_serial_log: true

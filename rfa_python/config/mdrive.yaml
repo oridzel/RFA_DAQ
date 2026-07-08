@@ -1,0 +1,63 @@
+simulate: true
+serial_defaults:
+  baudrate: 9600
+  timeout_s: 1.0
+motion_safety:
+  require_enable_token: true
+  max_single_move_steps: 50000
+  max_slew_steps_per_s: 10000
+  default_wait_timeout_s: 30.0
+  default_wait_poll_s: 0.1
+axes:
+  lift:
+    enabled: true
+    role: Bench MDrive for RFA lid lift/open-close; no encoder
+    port: COM12
+    labview_axis: Y
+    has_encoder: false
+    steps_per_micron: 100.0
+    units_per_microstep_scale: 100
+    manual_move_scale: 100
+    manual_move_units_label: microns
+    max_single_move_steps: 1500000
+    max_slew_steps_per_s: 10000
+    # User-facing lift coordinates are microns; all lift moves are multiplied by 100 microsteps/micron before sending to MDrive.
+    closed_position_microns: 0
+    open_position_microns: -12000
+    # Raw microstep fallbacks kept for compatibility; normally not edited by hand.
+    closed_position_steps: 0
+    open_position_steps: -1200000
+    wait_timeout_s: 180.0
+    wait_poll_s: 0.1
+    allow_home: false
+  rotation:
+    enabled: true
+    role: Bench MDrive for temporary sample rotation; has encoder/index; will later
+      be replaced by Titan
+    port: COM21
+    labview_axis: Z
+    has_encoder: true
+    steps_per_micron: null
+    max_single_move_steps: 50000
+    max_slew_steps_per_s: 10000
+    wait_timeout_s: 30.0
+    wait_poll_s: 0.1
+    allow_home: true
+    allow_home_switch: false
+    home_command: HI
+    home_type: 2
+    home_overshoot_steps: 2000
+    angle_lut_csv: angles-steps-LUT.csv
+    enable_encoder_before_home: false
+    set_c1_after_home: 0
+    counts_per_revolution: 51200
+    encoder_counts_per_revolution: 2048
+    # Do not change encoder mode during GUI startup or Initialize on the real RFA.
+    # Existing MDrive settings on the controller are treated as authoritative.
+    initialize_encoder_enable: null
+    # Do not zero counters or rewrite controller settings during GUI startup/Initialize.
+    # Use Zero C1/C2 manually only when physically at a known reference, or let successful HI homing zero them.
+    initialize_c1: null
+    initialize_c2: null
+    initialize_p: null
+    echo_mode: null

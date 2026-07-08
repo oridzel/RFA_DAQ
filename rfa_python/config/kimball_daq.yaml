@@ -1,0 +1,187 @@
+# NI-DAQmx / Kimball EGPS-3101 foundation config.
+# v0.17 is conservative: read meters, zero AO outputs, LUT preview, electrostatic apply, and Source-mode ramp only.
+
+simulate: true
+
+# LUT file with columns Energy(eV), X(V), Y(V). Grid is suggested as 2.5% of energy; Focus remains manual.
+lut_path: egunlut.csv
+
+# From the Kimball LabVIEW setup screen and Windows device list:
+#   PXI1Slot2 = PXIe-6341 metering/multifunction card
+#   PXI1Slot4 = PXI-6733 analog-output control card
+metering_device: PXI1Slot2
+control_device: PXI1Slot4
+
+safety:
+  ao_min_V: -10.0
+  ao_max_V: 10.0
+  ai_min_V: -10.0
+  ai_max_V: 10.0
+  # Raw AO tests are limited to small values unless --allow-large-ao is passed.
+  max_raw_ao_test_V: 0.2
+
+user_options:
+  # Original User Options.txt had 0.250 V and 5 s.  Use 0.1 V later for
+  # source warm-up unless you intentionally change this.  Delay is now 10 s because Source voltage settles slowly. Ramp step is hard-limited in code.
+  source_ramp_increment_V: 0.02
+  source_ramp_delay_s: 10.0
+  original_max_source_increment_V: 0.25
+  original_number_of_samples_for_meter_readings: 500
+  original_raster_update_rate: 500000
+  meter_samples_default: 20
+
+# Legacy Input Device&Channel.txt columns:
+# name, device index, channel index, engineering_max, input_range_V, units.
+meters:
+  energy:
+    label: Energy
+    device: PXI1Slot2
+    channel: ai0
+    engineering_max: 10
+    input_range_V: 2
+    units: keV
+  emission:
+    label: Emission
+    device: PXI1Slot2
+    channel: ai6
+    engineering_max: 100
+    input_range_V: 2
+    units: uA
+  source_volts:
+    label: Source Volts
+    device: PXI1Slot2
+    channel: ai1
+    engineering_max: 5
+    input_range_V: 2
+    units: V
+  source_amps:
+    label: Source Amps
+    device: PXI1Slot2
+    channel: ai7
+    engineering_max: 3
+    input_range_V: 2
+    units: A
+  grid:
+    label: Grid
+    device: PXI1Slot2
+    channel: ai2
+    engineering_max: 500
+    input_range_V: 2
+    units: V
+  focus:
+    label: Focus
+    device: PXI1Slot2
+    channel: ai4
+    engineering_max: 10
+    input_range_V: 2
+    units: kV
+  x_center:
+    label: X Center
+    device: PXI1Slot2
+    channel: ai8
+    engineering_max: 300
+    input_range_V: 2
+    units: V
+    bipolar: true
+  y_center:
+    label: Y Center
+    device: PXI1Slot2
+    channel: ai9
+    engineering_max: 300
+    input_range_V: 2
+    units: V
+    bipolar: true
+
+# Legacy Output Device&Channel.txt columns:
+# name, device index, channel index, engineering_max, output_range_V, units, coarse_inc, fine_inc.
+# WARNING: units in the legacy file are partly ambiguous. Do not use these for
+# automatic gun operation until we verify scaling against the old LabVIEW VI.
+controls:
+  energy:
+    label: Energy Control
+    device: PXI1Slot4
+    channel: ao0
+    engineering_max: 10
+    output_range_V: 10
+    units: keV_check_legacy_file_says_eV
+    coarse_increment: 0.1
+    fine_increment: 0.001
+  source_ecc_source_mode:
+    label: Source/ECC Control in Source Mode
+    device: PXI1Slot4
+    channel: ao1
+    # From Output Device&Channel.txt:
+    # Source/ECC in Source Mode, AO1, engineering full-scale 5 V, DAQ output range 10 V.
+    # Therefore normal engineering writes use AO1 = Source_V/5*10.
+    # Use the explicit raw-AO calibration buttons/CLI before using automatic Source ramp on real hardware.
+    engineering_max: 5
+    output_range_V: 10
+    units: V
+    coarse_increment: 0.1
+    fine_increment: 0.01
+  source_ecc_ecc_mode:
+    label: Source/ECC Control in ECC Mode
+    device: PXI1Slot4
+    channel: ao1
+    engineering_max: 100
+    output_range_V: 10
+    units: uA
+    coarse_increment: 1
+    fine_increment: 0.1
+  grid:
+    label: G-1 / Grid Control
+    device: PXI1Slot4
+    channel: ao2
+    engineering_max: 500
+    output_range_V: 10
+    units: V
+    coarse_increment: 10
+    fine_increment: 0.1
+  focus:
+    label: Focus Control
+    device: PXI1Slot4
+    channel: ao4
+    engineering_max: 10
+    output_range_V: 10
+    units: kV_check_legacy_file_says_V
+    coarse_increment: 0.1
+    fine_increment: 0.001
+  x_center:
+    label: X Center
+    device: PXI1Slot4
+    channel: ao6
+    engineering_max: 300
+    output_range_V: 10
+    units: V
+    coarse_increment: 10
+    fine_increment: 1
+    bipolar: true
+  y_center:
+    label: Y Center
+    device: PXI1Slot4
+    channel: ao7
+    engineering_max: 300
+    output_range_V: 10
+    units: V
+    coarse_increment: 10
+    fine_increment: 1
+    bipolar: true
+
+digital_controls:
+  source_ecc_switch:
+    legacy_line: L0
+    daqmx_line: null
+    note: Legacy file says L0; DAQmx physical line not verified yet.
+  deflection_switch:
+    legacy_line: L1
+    # Output Device&Channel.txt says device 2, L1 for Deflection Switch.
+    # With control_device PXI1Slot4 this is normally PXI1Slot4/port0/line1.
+    # Logic follows Kimball/NI digital convention: False=OFF, True=ON.
+    daqmx_line: PXI1Slot4/port0/line1
+    on_value: true
+    off_value: false
+    note: Must be ON before writing X/Y deflection. Automatic X/Y procedures call ensure_deflection_enabled().
+  pulse_switch:
+    legacy_line: C0
+    daqmx_line: null
+    note: Legacy file says C0; may be a counter rather than a DO line. Not touched in v0.15.

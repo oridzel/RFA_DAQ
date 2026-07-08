@@ -1,0 +1,49 @@
+# RBD 9103 acquisition profiles for measurement workflows.
+#
+# The measurement tabs use named profiles rather than free-floating RBD
+# settings. This keeps yield/spectrum data reproducible while still allowing
+# future faster or pulsed acquisition modes.
+
+default_profile: yield_standard
+
+profiles:
+  yield_standard:
+    description: Standard low-noise yield measurement. Wait after voltage/energy changes, then average raw currents.
+    range: auto
+    filter: 32
+    sample_interval_ms: 50
+    default_n_samples: 5
+    default_sample_period_s: 0.05
+    discard_first: 2
+    mode: interval
+
+  spectrum_standard:
+    description: Conservative spectrum scan profile; faster than yield_standard but still filtered.
+    range: auto
+    filter: 16
+    sample_interval_ms: 25
+    default_n_samples: 1
+    default_sample_period_s: 0.025
+    discard_first: 1
+    mode: interval
+
+  spectrum_low_noise:
+    description: Slower spectrum scan profile for better noise averaging.
+    range: auto
+    filter: 32
+    sample_interval_ms: 50
+    default_n_samples: 3
+    default_sample_period_s: 0.05
+    discard_first: 2
+    mode: interval
+
+  pulsed_insulator_future:
+    description: Placeholder for future pulsed-beam/insulator measurements; not implemented yet.
+    range: auto
+    filter: off
+    sample_interval_ms: 2
+    default_n_samples: 1
+    default_sample_period_s: 0.002
+    discard_first: 0
+    mode: high_speed_future
+    implemented: false

@@ -1,0 +1,11 @@
+# SRS DC205 voltage source config.
+# Set the COM port for your lab computer.
+name: SRS DC205
+simulate: false
+serial:
+  port: COM11
+  baudrate: 115200   # USB serial-emulation default; RS-232 may be 9600 after front-panel power-on reset
+  timeout_s: 1.0
+safety:
+  max_abs_voltage_V: 100.0
+  allow_100V_range: true

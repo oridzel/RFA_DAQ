@@ -1,0 +1,14 @@
+# Single TDK-Lambda PHV high-voltage supply config.
+# For the four-supply RFA setup, use tdk_supplies.yaml and tdk_rfa_cli.py.
+name: TDK PHV
+simulate: true
+polarity_mode: unknown       # reversible, fixed_positive, fixed_negative, or unknown
+serial:
+  port: COM1
+  baudrate: 9600
+  timeout_s: 1.0
+safety:
+  max_abs_voltage_V: 100.0
+  max_current_A: 0.001
+  default_current_A: 0.0001
+  require_enable_token: true

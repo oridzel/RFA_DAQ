@@ -1,0 +1,46 @@
+# Four TDK/FUG PHV supplies for the current RFA setup.
+# This file is intentionally conservative: edit max_abs_voltage_V only when you
+# intentionally need a higher bias range.
+#
+# polarity_mode:
+#   reversible      -> driver may send >BX 0 / >BX 1 based on voltage sign
+#   fixed_positive  -> only positive signed voltages accepted, no >BX command
+#   fixed_negative  -> only negative signed voltages accepted, no >BX command
+#
+# m0_is_magnitude_only:
+#   false -> >M0? already reports signed voltage, as tested for PNR and R
+#   true  -> future/other model reports only positive magnitude, driver applies sign
+simulate: false
+
+serial_defaults:
+  baudrate: 115200
+  timeout_s: 1.0
+
+safety_defaults:
+  max_abs_voltage_V: 100.0
+  max_current_A: 0.001        # A; 1 mA software limit for early tests
+  default_current_A: 0.0001   # A; 0.1 mA, LabVIEW-style low default
+  require_enable_token: true
+
+supplies:
+  PN:
+    enabled: true
+    port: COM8
+    polarity_mode: fixed_positive
+
+  N:
+    enabled: true
+    port: COM19
+    polarity_mode: fixed_negative
+
+  PNR:
+    enabled: true
+    port: COM20
+    polarity_mode: reversible
+    m0_is_magnitude_only: false
+
+  R:
+    enabled: true
+    port: COM6
+    polarity_mode: reversible
+    m0_is_magnitude_only: false
