@@ -1,40 +1,50 @@
-# RFA Python RBD / Kimball control package v0.19.19
+# RFA Python DAQ Control Suite
 
-Changes from v0.19.18:
+Python control software for the NIST RFA secondary-electron-yield measurement system.
 
-## Live XY image pixel inspector
+This package replaces and extends the older LabVIEW-based control workflow. It provides a PySide6 GUI and command-line tools for controlling the electron gun, picoammeters, high-voltage supplies, motion stages, collector bias supply, and automated imaging/measurement procedures.
 
-Added click-to-inspect support for the XY imaging live TEY image.
+---
 
-- Works while the scan is still running for pixels that have already been measured.
-- Works after the scan is finished for all measured pixels.
-- Click a pixel in the live image to show:
-  - X deflection voltage
-  - Y deflection voltage
-  - TEY
-  - yield numerator and denominator
-  - raw physical-electrode mean currents when present in the row
-- The selected pixel is marked on the image with a square marker.
-- If you click a pixel that has not been measured yet, the panel reports that it is not measured yet and shows the nearest X/Y coordinates.
+## 1. System Overview
 
-This is purely a GUI/data-display change. It does not change imaging hardware behavior, source warm-up, deflection-switch control, SRS settings, or RBD acquisition settings.
+The system controls the following hardware:
 
-## Kept from v0.19.18
+| Device | Purpose |
+|---|---|
+| Kimball electron gun / EGPS control interface | Beam energy, Source/ECC, grid/cutoff, focus, X/Y deflection, digital switches |
+| RBD 9103 picoammeters | Current measurement from RFA electrodes |
+| TDK/FUG/PHV supplies | Biases for RFA electrodes |
+| SRS DC205 | Collector voltage source, typically +50 V for TEY/imaging |
+| IMS MDrive motors | RFA lift and sample/holder rotation |
+| NI DAQ | Analog/digital interface for Kimball electron gun control |
+| PySide6 GUI | Integrated system control, monitoring, warm-up, and imaging |
 
-- SRS DC205 config:
-  - port COM11
-  - baudrate 115200
-  - max_abs_voltage_V 100.0
-  - allow_100V_range true
-- RBD COM-port mapping:
-  - Sample / Sneezy: COM10
-  - Retarding Grid 1 / Sleepy: COM13
-  - Collector / Dopey: COM9
-  - Retarding Grid 2 / Happy: COM14
-  - Space-charge Grid / Grumpy: COM16
-  - Drift Tube / Bashful: COM17
-  - Rod / Doc: COM7
-- XY imaging turns Kimball deflection ON before X/Y writes.
-- Source scaling remains verified:
-  - AO1 = 2 * Source_display_V
-- Source ramp delay remains 10 s by default.
+The package is designed for cautious manual-supervised operation. It includes software limits, explicit real-hardware confirmation flags, and conservative ramping procedures for the electron gun Source supply.
+
+---
+
+## 2. Important Safety Notes
+
+This software controls high voltages, electron-gun cathode heating, beam deflection, and motorized vacuum hardware.
+
+Before running real hardware:
+
+1. Confirm vacuum is safe for electron-gun operation.
+2. Confirm correct grounding of chamber and unused feedthroughs.
+3. Confirm the correct COM ports and NI DAQ channels.
+4. Confirm the Source/ECC mode is correct.
+5. Watch the Kimball front panel during Source ramping.
+6. Keep hardware emergency stop and power controls accessible.
+7. Do not leave automated warm-up or imaging unattended.
+
+The Source supply has delayed response. After changing Source voltage, the actual Source voltage and Source current may continue to ramp for several seconds. The software therefore uses a default 10 s delay between Source steps.
+
+---
+
+## 3. Installation
+
+From the package directory:
+
+```bash
+pip install -e .
