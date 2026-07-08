@@ -1,8 +1,8 @@
 # RFA Python DAQ Control Suite
 
-Python control software for the NIST RFA secondary-electron-yield measurement system.
+Python control software for the RFA secondary-electron-yield measurement system.
 
-This package replaces and extends the older LabVIEW-based control workflow. It provides a PySide6 GUI and command-line tools for controlling the electron gun, picoammeters, high-voltage supplies, motion stages, collector bias supply, and automated imaging/measurement procedures.
+This package provides a PySide6 GUI and command-line tools for controlling the electron gun, picoammeters, high-voltage supplies, motion stages, collector bias supply, and automated imaging/measurement procedures.
 
 ---
 
